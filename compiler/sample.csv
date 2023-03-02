@@ -1,0 +1,5 @@
+input_size(28:28:1:8),SumPooling({2:2}:{2:2}:Valid),,,Sign(),Flatten()
+FullyConnect(1024:0.05),,BNorm(0.95:0.001),,Sign(),
+FullyConnect(1024:0.05),,BNorm(0.95:0.001),,Sign(),
+FullyConnect(1024:0.05),,BNorm(0.95:0.001),,Sign(),
+FullyConnect(10:0.05),,,,,
