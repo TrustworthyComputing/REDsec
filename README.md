@@ -2,7 +2,7 @@
 REDsec is an end-to-end framework for encrypted
 neural network inference using the CGGI cryptosystem. The [TFHE](https://github.com/tfhe/tfhe)
 and [(RED)cuFHE](https://github.com/TrustworthyComputing/REDcuFHE) libraries are
-utilized as cryptographic backends. 
+utilized as cryptographic backends. A video presentation of REDsec is available [here](https://drive.google.com/file/d/19DTRfBerJ_CbMYzo2dTH1qdvWbZ0eecL/view?usp=sharing).
 
 ## Prerequisites
 ### Encrypted Inference with CPUs
