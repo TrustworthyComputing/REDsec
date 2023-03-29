@@ -9,7 +9,7 @@ namespace BinOps
 {
     // XNOR (1 bootstrap)
     void multiply(tBit* result, const tBit* a, const uint8_t b, TFheGateBootstrappingCloudKeySet* bk);
-    void multiply_pc_ints(LweSample* result, LweSample* in1, const uint16_t* multicand, uint8_t in1_bits, uint8_t in2_bits, TFheGateBootstrappingCloudKeySet* bk);
+    void multiply_pc_ints(LweSample* result, LweSample* in1, const uint32_t* multicand, uint8_t in1_bits, uint8_t in2_bits, TFheGateBootstrappingCloudKeySet* bk);
 
     void add_bit(tMultiBit* result, const tBit* a, const tBit* b, TFheGateBootstrappingCloudKeySet* bk);
     
@@ -41,7 +41,7 @@ namespace BinOps
     void get_filters(FILE* fd_in, tBit* p_filt_b, uint32_t len, TFheGateBootstrappingCloudKeySet* bk);
     void get_ternfilters(FILE* fd_in, uint8_t* p_filt_b, uint8_t* p_tern, uint32_t len, float thresh, TFheGateBootstrappingCloudKeySet* bk) ;
     void get_intfilters(FILE* fd_in, tMultiBit* p_filt_b, uint32_t len, TFheGateBootstrappingCloudKeySet* bk) ;
-    void get_intfilters_ptxt(FILE* fd_in, uint16_t* p_filt_mb, uint32_t len);
+    void get_intfilters_ptxt(FILE* fd_in, uint32_t* p_filt_mb, uint32_t len);
 
     // helper function
     int pow_int(int base, int exponent);

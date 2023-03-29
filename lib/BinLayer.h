@@ -52,7 +52,7 @@ class BinLayer
         void* run(eAction e_act, tActParams* ap, FILE* fd) ;
         tMultiBit* p_bias ;
 #ifdef ENCRYPTED
-        uint16_t* p_slope ;
+        uint32_t* p_slope ;
 #else
         tMultiBit* p_slope ;
 #endif

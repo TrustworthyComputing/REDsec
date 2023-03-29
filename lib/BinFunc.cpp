@@ -987,7 +987,7 @@ BinFunc::Quantize::Quantize(tQParams* qparam)
 *    Notes:     Contains both quantized relu and sign activations
 **********************************************************************************/
 #ifdef ENCRYPTED
-tDimensions* BinFunc::Quantize::prep(FILE* fd_bias, tDimensions* ret_dim, tMultiBit* p_bias, uint16_t* p_slope, TFheGateBootstrappingCloudKeySet* in_bk)
+tDimensions* BinFunc::Quantize::prep(FILE* fd_bias, tDimensions* ret_dim, tMultiBit* p_bias, uint32_t* p_slope, TFheGateBootstrappingCloudKeySet* in_bk)
 #else
 tDimensions* BinFunc::Quantize::prep(FILE* fd_bias, tDimensions* ret_dim, tMultiBit* p_bias, tMultiBit* p_slope, TFheGateBootstrappingCloudKeySet* in_bk)
 #endif
@@ -1122,7 +1122,7 @@ tMultiBit* BinFunc::Quantize::add_bias(tMultiBit* p_inputs, tMultiBit* p_bias)
 *    		https://arxiv.org/abs/1606.06160
 **********************************************************************************/
 #ifdef ENCRYPTED
-tFixedPoint* BinFunc::Quantize::relu_shift(tMultiBit* p_inputs, tMultiBit* p_bias, uint16_t* p_slope)
+tFixedPoint* BinFunc::Quantize::relu_shift(tMultiBit* p_inputs, tMultiBit* p_bias, uint32_t* p_slope)
 #else
 tFixedPoint* BinFunc::Quantize::relu_shift(tMultiBit* p_inputs, tMultiBit* p_bias, tMultiBit* p_slope)
 #endif

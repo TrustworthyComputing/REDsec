@@ -96,7 +96,7 @@ tDimensions* BinLayer::prep(FILE* fd, tDimensions* dim)
     p_slope = NULL ;
     if((e_activation == E_ACTIVATION_RELU) && (e_bias == E_BNORM)){ p_slope = mbit_calloc(conv_depth, MULTIBIT_BITS, bk) ; }
 #else
-    if((e_activation == E_ACTIVATION_RELU) && (e_bias == E_BNORM)){ p_slope = (uint16_t*) calloc(conv_depth, sizeof(uint16_t)) ; }
+    if((e_activation == E_ACTIVATION_RELU) && (e_bias == E_BNORM)){ p_slope = (uint32_t*) calloc(conv_depth, sizeof(uint32_t)) ; }
 #endif
 	//initialize arguments
     tActParams pact ;

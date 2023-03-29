@@ -144,14 +144,14 @@ class BinFunc::Quantize
         //functions
         Quantize(tQParams* qparam) ;
         #ifdef ENCRYPTED
-        tDimensions* prep(FILE* fd_bias, tDimensions* ret_dim, tMultiBit* p_bias, uint16_t* p_slope, TFheGateBootstrappingCloudKeySet* in_bk) ;
+        tDimensions* prep(FILE* fd_bias, tDimensions* ret_dim, tMultiBit* p_bias, uint32_t* p_slope, TFheGateBootstrappingCloudKeySet* in_bk) ;
         #else
         tDimensions* prep(FILE* fd_bias, tDimensions* ret_dim, tMultiBit* p_bias, tMultiBit* p_slope, TFheGateBootstrappingCloudKeySet* in_bk) ;
         #endif
         tBit* execute(tMultiBit* p_inputs, tMultiBit* p_bias) ;
         tMultiBit* add_bias(tMultiBit* p_inputs, tMultiBit* p_bias) ;
         #ifdef ENCRYPTED
-        tFixedPoint* relu_shift(tMultiBit* p_inputs, tMultiBit* p_bias, uint16_t* p_slope);
+        tFixedPoint* relu_shift(tMultiBit* p_inputs, tMultiBit* p_bias, uint32_t* p_slope);
         #else
         tFixedPoint* relu_shift(tMultiBit* p_inputs, tMultiBit* p_bias, tMultiBit* p_slope);
         #endif

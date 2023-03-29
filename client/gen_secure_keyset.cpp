@@ -6,15 +6,12 @@
 #include <string.h>
 #include <sys/types.h>
 
-TFheGateBootstrappingParameterSet* redsec_params(){
-    int lwe_dim = 630;
-    int tlwe_dim = 1024;
-    double std_dev = pow(2.,-40);
-    double bootkey_std_dev = pow(2.,-41);
-    double kskey_std_dev = pow(2., -35);
-    // double std_dev = pow(2.,-160);
-    // double bootkey_std_dev = pow(2.,-160); 
-    // double kskey_std_dev = pow(2.,-160);
+TFheGateBootstrappingParameterSet* redsec_params_large(){
+    int lwe_dim = 6144;
+    int tlwe_dim = 8192;
+    double std_dev = pow(2.,-48);
+    double bootkey_std_dev = pow(2.,-46);
+    double kskey_std_dev = pow(2., -41);
 
 
     LweParams* lwe_params = new_LweParams (lwe_dim, kskey_std_dev, std_dev);
@@ -28,8 +25,47 @@ TFheGateBootstrappingParameterSet* redsec_params(){
     return new TFheGateBootstrappingParameterSet(18, 1, lwe_params, tgsw_params);
 }
 
+TFheGateBootstrappingParameterSet* redsec_params_medium(){
+    int lwe_dim = 3072;
+    int tlwe_dim = 4096;
+    double std_dev = pow(2.,-45);
+    double bootkey_std_dev = pow(2.,-45);
+    double kskey_std_dev = pow(2., -40);
+
+
+    LweParams* lwe_params = new_LweParams (lwe_dim, kskey_std_dev, std_dev);
+    TLweParams* tlwe_params = new_TLweParams(tlwe_dim, 1, bootkey_std_dev, std_dev);
+    TGswParams* tgsw_params = new_TGswParams(3, 10, tlwe_params);
+
+    TfheGarbageCollector::register_param(lwe_params);
+    TfheGarbageCollector::register_param(tlwe_params);
+    TfheGarbageCollector::register_param(tgsw_params);
+
+    return new TFheGateBootstrappingParameterSet(18, 1, lwe_params, tgsw_params);
+}
+
+TFheGateBootstrappingParameterSet* redsec_params_small(){
+    int lwe_dim = 630;
+    int tlwe_dim = 1024;
+    double std_dev = pow(2.,-40);
+    double bootkey_std_dev = pow(2.,-41);
+    double kskey_std_dev = pow(2., -35);
+
+    LweParams* lwe_params = new_LweParams (lwe_dim, kskey_std_dev, std_dev);
+    TLweParams* tlwe_params = new_TLweParams(tlwe_dim, 1, bootkey_std_dev, std_dev);
+    TGswParams* tgsw_params = new_TGswParams(3, 10, tlwe_params);
+
+    TfheGarbageCollector::register_param(lwe_params);
+    TfheGarbageCollector::register_param(tlwe_params);
+    TfheGarbageCollector::register_param(tgsw_params);
+
+    return new TFheGateBootstrappingParameterSet(18, 1, lwe_params, tgsw_params);
+}
+
 int main(int argc, char** argv) {
-    TFheGateBootstrappingParameterSet* params = redsec_params();
+
+    // for wide networks, the medium and large parameters are better suited
+    TFheGateBootstrappingParameterSet* params = redsec_params_medium();
 
     // read 12 bytes from /dev/urandom
     FILE* urandom = fopen("/dev/urandom", "r");

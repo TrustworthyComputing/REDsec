@@ -111,14 +111,14 @@ namespace IntFunc
             tDimensions* prep(FILE* fd_bias, tDimensions* ret_dim, tMultiBit* p_bias, tMultiBit* p_slope, 
                 TFheGateBootstrappingCloudKeySet* in_bk) ;
             #else
-            tDimensions* prep(FILE* fd_bias, tDimensions* ret_dim, tMultiBit* p_bias, uint16_t* p_slope, TFheGateBootstrappingCloudKeySet* in_bk) ;
+            tDimensions* prep(FILE* fd_bias, tDimensions* ret_dim, tMultiBit* p_bias, uint32_t* p_slope, TFheGateBootstrappingCloudKeySet* in_bk) ;
             #endif
             tBit* execute(tFixedPoint* p_inputs, tMultiBit* p_bias) ;
             tFixedPoint* add_bias(tFixedPoint* p_inputs, tMultiBit* p_bias) ;
             #ifndef ENCRYPTED
             tFixedPoint* relu_shift(tFixedPoint* p_inputs, tMultiBit* p_bias, tMultiBit* p_slope) ;
             #else 
-            tFixedPoint* relu_shift(tFixedPoint* p_inputs, tMultiBit* p_bias, uint16_t* p_slope) ;
+            tFixedPoint* relu_shift(tFixedPoint* p_inputs, tMultiBit* p_bias, uint32_t* p_slope) ;
             #endif
 
             //weight convert functions

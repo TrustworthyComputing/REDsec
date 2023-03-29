@@ -34,10 +34,9 @@ void BinOps::multiply(tBit* result, const tBit* a, const uint8_t b, TFheGateBoot
   }
 }
 
-void BinOps::multiply_pc_ints(LweSample* result, LweSample* in1, const uint16_t* multicand, uint8_t in1_bits, uint8_t in2_bits, TFheGateBootstrappingCloudKeySet* bk) 
+void BinOps::multiply_pc_ints(LweSample* result, LweSample* in1, const uint32_t* multicand, uint8_t in1_bits, uint8_t in2_bits, TFheGateBootstrappingCloudKeySet* bk) 
 {
   const LweParams *in_out_params = bk->params->in_out_params;
-  lweClear(result, in_out_params);
   lweAddMulTo(result, *multicand,  in1, in_out_params);
 }
 
@@ -304,18 +303,12 @@ void BinOps::get_intfilters(FILE* fd_in, tMultiBit* p_filt_mb, uint32_t len, TFh
   free(int_filt) ;
 }
 
-void BinOps::get_intfilters_ptxt(FILE* fd_in, uint16_t* p_filt_mb, uint32_t len)
+void BinOps::get_intfilters_ptxt(FILE* fd_in, uint32_t* p_filt_mb, uint32_t len)
 {
   uint8_t version = NULL_FMT;
   size_t sread = fread(&version, sizeof(uint8_t), 1, fd_in);
   assert((version == UINT32_FMT) || (version == INT32_FMT));
-  int32_t* int_filt = (int32_t*) calloc(len, sizeof(int32_t));
-  size_t size = fread((int32_t*)(int_filt), sizeof(int32_t), len, fd_in) ;
-  p_filt_mb = (uint16_t*) calloc(len, sizeof(uint16_t));
-  for (uint32_t i = 0; i < len; i++) {
-    p_filt_mb[i] = int_filt[i] & 0xFFFF;
-  }
-  free(int_filt);
+  sread = fread((uint32_t*)(p_filt_mb), sizeof(uint32_t), len, fd_in) ;
 }
 
 #endif

@@ -59,7 +59,7 @@ class IntLayer
             #ifndef ENCRYPTED
             tMultiBit* p_slope ;
             #else
-            uint16_t* p_slope;
+            uint32_t* p_slope;
             #endif
             //state variables
             TFheGateBootstrappingCloudKeySet* bk ;

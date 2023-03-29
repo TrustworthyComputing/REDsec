@@ -97,7 +97,7 @@ tDimensions* IntLayer::prep(FILE* fd, tDimensions* dim)
     #ifndef ENCRYPTED
     if((e_activation == E_ACTIVATION_RELU) && (e_bias == E_BNORM)) {    p_slope = mbit_calloc(conv_depth, FIXEDPOINT_BITS, bk) ; }
     #else
-    if((e_activation == E_ACTIVATION_RELU) && (e_bias == E_BNORM)){ p_slope = (uint16_t*) calloc(conv_depth, sizeof(uint16_t)) ; }
+    if((e_activation == E_ACTIVATION_RELU) && (e_bias == E_BNORM)){ p_slope = (uint32_t*) calloc(conv_depth, sizeof(uint32_t)) ; }
     #endif
 
     //initialize arguments

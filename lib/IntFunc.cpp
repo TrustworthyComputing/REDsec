@@ -787,7 +787,7 @@ tDimensions* IntFunc::Quantize::prep(FILE* fd_bias, tDimensions* ret_dim,
 		tMultiBit* p_bias, tMultiBit* p_slope, TFheGateBootstrappingCloudKeySet* in_bk)
 #else
 tDimensions* IntFunc::Quantize::prep(FILE* fd_bias, tDimensions* ret_dim,
-		tMultiBit* p_bias, uint16_t* p_slope, TFheGateBootstrappingCloudKeySet* in_bk)
+		tMultiBit* p_bias, uint32_t* p_slope, TFheGateBootstrappingCloudKeySet* in_bk)
 #endif
 {
     //input error checking
@@ -803,7 +803,7 @@ tDimensions* IntFunc::Quantize::prep(FILE* fd_bias, tDimensions* ret_dim,
 #ifndef ENCRYPTED
     if(p_slope!=NULL && shift_bits> 1){ BinOps::get_intfilters(fd_bias, (tMultiBit*) p_slope, bias_len, in_bk) ; }
 #else
-    if(p_slope!=NULL && shift_bits> 1){ BinOps::get_intfilters_ptxt(fd_bias, (uint16_t*) p_slope, bias_len) ; }
+    if(p_slope!=NULL && shift_bits> 1){ BinOps::get_intfilters_ptxt(fd_bias, (uint32_t*) p_slope, bias_len) ; }
 #endif
 
 #endif //!_WEIGHT_CONVERT_
@@ -937,7 +937,7 @@ tFixedPoint* IntFunc::Quantize::add_bias(tFixedPoint* p_inputs, tMultiBit* p_bia
 #ifndef ENCRYPTED
 tFixedPoint* IntFunc::Quantize::relu_shift(tFixedPoint* p_inputs, tMultiBit* p_bias, tMultiBit* p_slope)
 #else
-tFixedPoint* IntFunc::Quantize::relu_shift(tFixedPoint* p_inputs, tMultiBit* p_bias, uint16_t* p_slope)
+tFixedPoint* IntFunc::Quantize::relu_shift(tFixedPoint* p_inputs, tMultiBit* p_bias, uint32_t* p_slope)
 #endif
 {
     tFixedPoint* x_bn ;
@@ -948,17 +948,22 @@ tFixedPoint* IntFunc::Quantize::relu_shift(tFixedPoint* p_inputs, tMultiBit* p_b
     //allocate memory
     p_output = fixpt_calloc(dim_len, MULTIBIT_BITS, bk) ;
     int min = 00, max=100 ;
+    #ifdef ENCRYPTED
+    x_bn = fixpt_calloc(3, 1 , bk) ;
+    lweClear(&x_bn[2].ctxt[0], bk->bk->in_out_params);
+    #else
     x_bn = fixpt_calloc(1, FIXEDPOINT_BITS , bk) ;
+    #endif
+    #pragma omp parallel for shared(p_output, p_inputs) firstprivate(x_bn)
     for(uint64_t i = 0 ; i < dim_len ; i++)
     {
         di = i % lay_dim.in_dep ;
         #ifdef ENCRYPTED
         BinOps::multiply_pc_ints(&(x_bn[0].ctxt[0]), &(p_inputs[i].ctxt[0]), &(p_slope[di]), (lay_dim.in_bits), SLOPE_BITS, bk) ;
-        BinOps::add_int(&x_bn[0].ctxt[0], &(x_bn[0].ctxt[0]),  &(p_bias[di].ctxt[0]), bk) ;
-        BinOps::binarize_int(&(x_bn[0].ctxt[0]), &(x_bn[0].ctxt[0]), 1, bk) ;
-        IntOps::shift(&(p_output[i]), &(x_bn[0]), MULTIBIT_BITS, slope_bits, bk) ;
-        IntOps::relu(&(p_output[i]), &(x_bn[0]), shift_bits, bk) ;
-        BinOps::unbinarize_int(&(p_output[i].ctxt[0]), &(p_output[i].ctxt[0]), bk) ;
+        BinOps::add_int_inplace(&(x_bn[0].ctxt[0]),  &(p_bias[di].ctxt[0]), bk) ;
+        bootsCOPY(&x_bn[1].ctxt[0], &(x_bn[0].ctxt[0]), bk);
+        BinOps::binarize_int(&(x_bn[0].ctxt[0]), &(x_bn[0].ctxt[0]), lay_dim.in_bits, bk) ;
+        bootsMUX(&(p_output[i].ctxt[0]), &(x_bn[0].ctxt[0]), &(x_bn[2].ctxt[0]), &(x_bn[1].ctxt[0]), bk);
         #else
         IntOps::multiply_pc_ints(&(x_bn[0]), &(p_inputs[i]), &(p_slope[di]), (lay_dim.in_bits), SLOPE_BITS, bk) ;
         IntOps::add_pc_ints(&x_bn[0], &(x_bn[0]), &(p_bias[di]), (lay_dim.in_bits+SLOPE_BITS), bk) ;
