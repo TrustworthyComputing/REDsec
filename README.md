@@ -39,7 +39,7 @@ privacy-preserving neural network inference and will appear in the NDSS
 Symposium 2023 ([Cryptology ePrint
 Archive](https://eprint.iacr.org/2021/1100.pdf)):
 ```
-@inproceedings{folkerts2021redsec,
+@inproceedings{folkerts2023redsec,
     author       = {Lars Folkerts and Charles Gouert and Nektarios Georgios Tsoutsos},
     title        = {{REDsec: Running Encrypted Discretized Neural Networks in Seconds}},
     booktitle = {{Network and Distributed System Security Symposium (NDSS)}},

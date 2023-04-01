@@ -34,7 +34,7 @@ decrypt-image-help: ## Print instructions for setting formatting options for dec
 	@echo "run 'make decrypt-image'"
 
 clean: ## Delete executables, keys, and ciphertexts
-	@rm *.out *.ptxt *.ctxt *.key 2>/dev/null || true
+	@rm *.out *.ptxt *.ctxt *.key *.data 2>/dev/null || true
 
 .PHONY: help
 

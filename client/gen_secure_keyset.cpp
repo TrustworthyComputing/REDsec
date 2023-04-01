@@ -45,6 +45,25 @@ TFheGateBootstrappingParameterSet* redsec_params_medium(){
 }
 
 TFheGateBootstrappingParameterSet* redsec_params_small(){
+    int lwe_dim = 1280;
+    int tlwe_dim = 2048;
+    double std_dev = pow(2.,-43);
+    double bootkey_std_dev = pow(2.,-44);
+    double kskey_std_dev = pow(2., -38);
+
+
+    LweParams* lwe_params = new_LweParams (lwe_dim, kskey_std_dev, std_dev);
+    TLweParams* tlwe_params = new_TLweParams(tlwe_dim, 1, bootkey_std_dev, std_dev);
+    TGswParams* tgsw_params = new_TGswParams(3, 10, tlwe_params);
+
+    TfheGarbageCollector::register_param(lwe_params);
+    TfheGarbageCollector::register_param(tlwe_params);
+    TfheGarbageCollector::register_param(tgsw_params);
+
+    return new TFheGateBootstrappingParameterSet(18, 1, lwe_params, tgsw_params);
+}
+
+TFheGateBootstrappingParameterSet* redsec_params_tiny(){
     int lwe_dim = 630;
     int tlwe_dim = 1024;
     double std_dev = pow(2.,-40);
@@ -65,7 +84,7 @@ TFheGateBootstrappingParameterSet* redsec_params_small(){
 int main(int argc, char** argv) {
 
     // for wide networks, the medium and large parameters are better suited
-    TFheGateBootstrappingParameterSet* params = redsec_params_medium();
+    TFheGateBootstrappingParameterSet* params = redsec_params_small();
 
     // read 12 bytes from /dev/urandom
     FILE* urandom = fopen("/dev/urandom", "r");
