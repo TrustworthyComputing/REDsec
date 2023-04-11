@@ -17,7 +17,7 @@ Install [(RED)cuFHE](https://github.com/TrustworthyComputing/REDcuFHE)
 3. Build one (or more) of the desired library variants: `make ptxt && make cpu-encrypt && make gpu-encrypt` 
 
 ## Creating and Training Networks (CLOUD)
-REDsec has a BYON framework. The tutorial and compiler are located [here](https://github.com/TrustworthyComputing/REDsec/compiler).
+REDsec has a BYON framework. The tutorial and compiler are located [here](https://github.com/TrustworthyComputing/REDsec/tree/main/compiler).
 
 ## Generating Keysets and Encryption/Decryption (CLIENT)
 1. Navigate to client directory: `cd REDsec/client`
