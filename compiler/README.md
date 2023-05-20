@@ -19,7 +19,7 @@ To save as a csv stay in the tab with the designed neural network. Go to *File* 
 
 Our `sample.csv` targets MNIST with three 1024-neuron hidden layers.
 
-**Note:** We listed a [REDsec CSV netlist style guide](https://github.com/TrustworthyComputing/REDsec/compiler/NetlistStyleGuide.md) to edit your network without the VBA tool.
+**Note:** We listed a [REDsec CSV netlist style guide](https://github.com/TrustworthyComputing/REDsec/blob/main/compiler/NetlistStyleGuide.md) to edit your network without the VBA tool.
 
 ## REDsec Code Generator
 
