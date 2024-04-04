@@ -38,7 +38,7 @@
 #include "BinOps.h"
 #endif
 #define SLOPE_BITS 16
-char layer_cnt_debug = 48; //FIXME
+
 using namespace std;
 using namespace std::chrono;
 
@@ -163,11 +163,7 @@ tMultiBit* BinFunc::Convolution::execute(tBit* p_inputs)
     uint8_t oob_i ;
 
 #ifdef ENCRYPTED
-    int dynamic_msg_space = BinOps::pow_int(2, lay_dim.out_bits);
-    ofstream myfile;
-    myfile.open("../../../client/bitsize.data");
-    myfile << (int)lay_dim.out_bits << "\n";
-    myfile.close();
+    int dynamic_msg_space = 700;
 #endif
 
     //shorter names for offset, convolution windows
@@ -208,7 +204,6 @@ tMultiBit* BinFunc::Convolution::execute(tBit* p_inputs)
                 //XNOR 0 is NOT
                 //XNOR 1 is copy - use original input
                 #ifdef ENCRYPTED
-                BinOps::binarize_int(&p_inputs[input_i], &p_inputs[input_i], lay_dim.out_bits, bk);
                 lweClear(&p_inputs_bar[input_i], bk->params->in_out_params);
                 lweSubTo(&p_inputs_bar[input_i], &p_inputs[input_i], bk->params->in_out_params);
                 #else
@@ -1068,7 +1063,7 @@ tBit* BinFunc::Quantize::execute(tMultiBit* p_inputs, tMultiBit* p_bias)
         di = i % lay_dim.in_dep ;
         #ifdef ENCRYPTED
         BinOps::add_int(&x_add[0].ctxt[0], &(p_inputs[i].ctxt[0]), &p_bias[di].ctxt[0], bk) ;
-        BinOps::binarize_int(&(p_output[i]), &x_add[0].ctxt[0], 1, bk);
+        BinOps::binarize_int(&(p_output[i]), &x_add[0].ctxt[0], 11, bk);
         #else
 	    BinOps::add(&x_add[0], &(p_inputs[i]), &p_bias[di], (lay_dim.in_bits), bk) ;
         BinOps::binarize(&(p_output[i]), &x_add[0], (lay_dim.in_bits), bk) ;

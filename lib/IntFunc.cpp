@@ -187,11 +187,8 @@ tFixedPoint* IntFunc::Convolution::execute(tFixedPoint* p_inputs)
     assert(b_prep) ;
 
 #ifdef ENCRYPTED
-    int dynamic_msg_space = BinOps::pow_int(2, lay_dim.out_bits);
-    ofstream myfile;
-    myfile.open("../../../client/bitsize.data");
-    myfile << (int)lay_dim.out_bits << "\n";
-    myfile.close();
+    int dynamic_msg_space = 700;
+    const Torus32 mu_dynamic = modSwitchToTorus32(1, dynamic_msg_space);
 #endif
 
     //allocate output memory
@@ -219,7 +216,6 @@ tFixedPoint* IntFunc::Convolution::execute(tFixedPoint* p_inputs)
                 #ifndef ENCRYPTED
                 IntOps::invert(&p_inputs_bar[input_i], &p_inputs[input_i], p_zero_bit, bits, bk) ;
                 #else
-                BinOps::unbinarize_int(&p_inputs[input_i].ctxt[0], &p_inputs[input_i].ctxt[0], bk);
                 lweClear(&p_inputs_bar[input_i].ctxt[0], bk->params->in_out_params);
                 lweSubTo(&p_inputs_bar[input_i].ctxt[0], &p_inputs[input_i].ctxt[0], bk->params->in_out_params);
                 #endif
@@ -258,7 +254,7 @@ tFixedPoint* IntFunc::Convolution::execute(tFixedPoint* p_inputs)
                         else
                         {
                             #ifdef ENCRYPTED
-                            bootsCOPY(&(p_window[wi].ctxt[0]), &(p_inputs_bar[input_i].ctxt[0]), bk);
+                            bootsCOPY(&(p_window[wi].ctxt[0]), &(p_inputs[input_i].ctxt[0]), bk);
                             #else
                             p_window[wi] =  p_inputs[input_i] ;
                             #endif
@@ -269,7 +265,7 @@ tFixedPoint* IntFunc::Convolution::execute(tFixedPoint* p_inputs)
                     else if(p_tern != NULL && p_tern[filt_i] == 1)
                     {
                         #ifdef ENCRYPTED
-                        lweClear(&(p_window[wi].ctxt[0]), bk->params->in_out_params);
+                        lweNoiselessTrivial(&(p_window[wi].ctxt[0]), -mu_dynamic, bk->params->in_out_params);
                         #else
                         p_window[wi] =  *p_zero_bit ;
                         #endif
@@ -278,7 +274,7 @@ tFixedPoint* IntFunc::Convolution::execute(tFixedPoint* p_inputs)
 		            else
                     {
                         #ifdef ENCRYPTED
-                        lweClear(&(p_window[wi].ctxt[0]), bk->params->in_out_params);
+                        lweNoiselessTrivial(&(p_window[wi].ctxt[0]), -mu_dynamic, bk->params->in_out_params);
                         #else
                         p_window[wi] =  *p_half_val ;
                         #endif
@@ -885,7 +881,7 @@ tBit* IntFunc::Quantize::execute(tFixedPoint* p_inputs, tMultiBit* p_bias)
 #ifndef ENCRYPTED
      	IntOps::binarize(&p_output[i], &x_add[0], lay_dim.in_bits+1, bk) ;
 #else
-     	BinOps::binarize_int(&p_output[i], &x_add[0].ctxt[0], 1, bk) ;
+     	BinOps::binarize_int(&p_output[i], &x_add[0].ctxt[0], 11, bk) ;
 #endif
     }
 

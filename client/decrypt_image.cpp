@@ -15,19 +15,6 @@ int num_classes = 0;
 int num_bits = 0;
 int msg_space = 0;
 
-int pow_int(int base, int exponent) {
-    if (exponent == 0)
-        return 1;
-
-    int result = pow_int(base, exponent / 2);
-    result *= result;
-
-    if (exponent & 1)
-            result *= base;
-
-    return result;
-}    
-
 int main(int argc, char** argv) {
 
   if (argc != 2) {
@@ -47,17 +34,7 @@ int main(int argc, char** argv) {
     return -1;
   }
 
-  ifstream myfile("bitsize.data");
-  int msg_bits = 0;
-  if (myfile.is_open()) {
-    myfile >> msg_bits;
-    myfile.close();
-  }
-  if (msg_bits < 1) {
-    cout << "Invalid bitsize, re-run inference procedure!" << endl;
-    return 0;
-  }
-  msg_space = pow_int(2, msg_bits);
+  msg_space = 700;
 
   FILE* secret_key = fopen("secret.key", "rb");
   TFheGateBootstrappingSecretKeySet* key = new_tfheGateBootstrappingSecretKeySet_fromFile(secret_key);
@@ -73,7 +50,7 @@ int main(int argc, char** argv) {
   for (int i = 0; i < num_classes; i++) {
       import_gate_bootstrapping_ciphertext_fromFile(inference_output, &e_labels[i], params);
       auto tmp = modSwitchFromTorus32(lweSymDecrypt(e_labels + i, key->lwe_key, msg_space),msg_space);
-      if (tmp > (msg_space >> 1)) {
+      if (tmp > (msg_space/2)) {
         labels.push_back(tmp - msg_space);
       }
       else {

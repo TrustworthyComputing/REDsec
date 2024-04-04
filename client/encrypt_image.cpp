@@ -7,7 +7,7 @@
 #include <string.h>
 #include <sys/types.h>
 
-#define SECALPHA pow(2., -25)
+#define SECALPHA pow(2., -20)
 
 using namespace std;
 
@@ -74,8 +74,8 @@ int main(int argc, char** argv) {
 		curr_val = image.substr(0, pos);
 		image.erase(0, pos + delim.length());
 		int ptxt_val = stoi(curr_val, nullptr, 10)*2-255;
-		lweSymEncrypt(&e_image[j], modSwitchToTorus32(ptxt_val, 2048), SECALPHA, key->lwe_key);
-		// lweNoiselessTrivial(&e_image[j], modSwitchToTorus32(ptxt_val, 2048), params->in_out_params);
+		lweSymEncrypt(&e_image[j], modSwitchToTorus32(ptxt_val, 700), SECALPHA, key->lwe_key);
+		// lweNoiselessTrivial(&e_image[j], modSwitchToTorus32(ptxt_val, 700), params->in_out_params);
 		j++;
   }
 
