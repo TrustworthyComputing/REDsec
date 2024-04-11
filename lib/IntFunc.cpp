@@ -187,7 +187,7 @@ tFixedPoint* IntFunc::Convolution::execute(tFixedPoint* p_inputs)
     assert(b_prep) ;
 
 #ifdef ENCRYPTED
-    int dynamic_msg_space = 700;
+    int dynamic_msg_space = 4096;
     const Torus32 mu_dynamic = modSwitchToTorus32(1, dynamic_msg_space);
 #endif
 

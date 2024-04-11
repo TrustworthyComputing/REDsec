@@ -181,7 +181,7 @@ int BinOps::pow_int(int base, int exponent) {
 
 void BinOps::binarize_int(LweSample* result, const LweSample* a, const int bit_size, TFheGateBootstrappingCloudKeySet* bk)
 {
-  const Torus32 mu_boot = modSwitchToTorus32(1, 700);
+  const Torus32 mu_boot = modSwitchToTorus32(1, 4096);
   tfhe_bootstrap_FFT(result, bk->bkFFT, mu_boot, a);
 }
 
@@ -290,7 +290,7 @@ void BinOps::get_intfilters(FILE* fd_in, tMultiBit* p_filt_mb, uint32_t len, TFh
   size_t size = fread((int32_t*)(int_filt), sizeof(int32_t), len, fd_in) ;
 
   for (uint32_t i = 0; i < len; i++) {
-    mu = modSwitchToTorus32(int_filt[i], 700);
+    mu = modSwitchToTorus32(int_filt[i], 4096);
     lweNoiselessTrivial(&p_filt_mb[i].ctxt[0], mu, in_out_params);
   }
   free(int_filt) ;

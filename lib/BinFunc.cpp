@@ -163,7 +163,7 @@ tMultiBit* BinFunc::Convolution::execute(tBit* p_inputs)
     uint8_t oob_i ;
 
 #ifdef ENCRYPTED
-    int dynamic_msg_space = 700;
+    int dynamic_msg_space = 4096;
 #endif
 
     //shorter names for offset, convolution windows

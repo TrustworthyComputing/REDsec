@@ -66,10 +66,35 @@ TFheGateBootstrappingParameterSet* redsec_params_small(){
     return new TFheGateBootstrappingParameterSet(ks_length, kskey_basebits, lwe_params, tgsw_params);
 }
 
+// NOTE: Set SECALPHA to 2^-15 to balance decreased LWE polynomial size
+TFheGateBootstrappingParameterSet* redsec_params_small_v2(){
+    int lwe_dim = 350;
+    int tlwe_dim = 1024;
+    int k = 1;
+    double std_dev = pow(2.,-13);
+    double bootkey_std_dev = pow(2.,-30);
+    double kskey_std_dev = pow(2.,-25);
+    int32_t bootkey_basebits = 3;
+    int32_t bootkey_length = 10;
+    int32_t kskey_basebits = 3;
+    int32_t ks_length = 9;
+
+    LweParams* lwe_params = new_LweParams(lwe_dim, kskey_std_dev, std_dev);
+    TLweParams* tlwe_params = new_TLweParams(tlwe_dim, k, bootkey_std_dev, std_dev);
+    TGswParams* tgsw_params = new_TGswParams(bootkey_length, bootkey_basebits, tlwe_params);
+
+    TfheGarbageCollector::register_param(lwe_params);
+    TfheGarbageCollector::register_param(tlwe_params);
+    TfheGarbageCollector::register_param(tgsw_params);
+
+    return new TFheGateBootstrappingParameterSet(ks_length, kskey_basebits, lwe_params, tgsw_params);
+}
+
+
 int main(int argc, char** argv) {
 
     // for wide networks, the medium and large parameters are better suited
-    TFheGateBootstrappingParameterSet* params = redsec_params_small();
+    TFheGateBootstrappingParameterSet* params = redsec_params_small_v2();
 
     //generate a keypair
     uint32_t seed[] = { 0, 0, 0 };

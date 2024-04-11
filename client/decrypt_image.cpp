@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
     return -1;
   }
 
-  msg_space = 700;
+  msg_space = 4096;
 
   FILE* secret_key = fopen("secret.key", "rb");
   TFheGateBootstrappingSecretKeySet* key = new_tfheGateBootstrappingSecretKeySet_fromFile(secret_key);
