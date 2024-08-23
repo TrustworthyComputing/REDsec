@@ -85,7 +85,7 @@ namespace IntFunc
         public:
             //functions
             Quantize(tQParams* qparam) ;
-            tDimensions* prep(FILE* fd_bias, tDimensions* ret_dim, tMultiBitPacked* p_bias, uint16_t* p_slope);
+            tDimensions* prep(FILE* fd_bias, tDimensions* ret_dim, tMultiBitPacked** p_bias, uint16_t* p_slope);
             tBitPacked* execute(tFixedPointPacked* p_inputs, tFixedPointPacked* p_bias) ;
             tFixedPointPacked* add_bias(tFixedPointPacked* p_inputs, tMultiBitPacked* p_bias) ;
             tFixedPointPacked* relu_shift(tFixedPointPacked* p_inputs, tMultiBitPacked* p_bias, uint16_t* p_slope) ;

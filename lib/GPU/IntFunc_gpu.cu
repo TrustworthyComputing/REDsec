@@ -354,7 +354,7 @@ IntFunc::Quantize::Quantize(tQParams* qparam)
 }
 
 
-tDimensions* IntFunc::Quantize::prep(FILE* fd_bias, tDimensions* ret_dim, tMultiBitPacked* p_bias, uint16_t* p_slope)
+tDimensions* IntFunc::Quantize::prep(FILE* fd_bias, tDimensions* ret_dim, tMultiBitPacked** p_bias, uint16_t* p_slope)
 {
     //input error checking
     assert(!b_prep) ;
@@ -362,8 +362,25 @@ tDimensions* IntFunc::Quantize::prep(FILE* fd_bias, tDimensions* ret_dim, tMulti
 
     //get bias offset
     uint32_t bias_len = ret_dim->in_dep ;
-    assert((fd_bias != NULL) && (p_bias != NULL)) ;
-    BinOps::get_intfilters(fd_bias, (tMultiBitPacked**) &p_bias, bias_len) ;
+    assert((fd_bias != NULL)) ;
+
+    uint8_t version = 0;
+    size_t sread = fread(&version, sizeof(uint8_t), 1, fd_bias);
+    assert((version == 3) || (version == 4));
+
+    int32_t* int_filt = (int32_t*) calloc(bias_len, sizeof(int32_t));
+
+    size_t size = fread((int32_t*)(int_filt), sizeof(int32_t), bias_len, fd_bias) ;
+    mbit_calloc_global(p_bias, bias_len, 1);
+    omp_set_num_threads(NUM_GPUS);
+    #pragma omp parallel for shared(p_bias)
+    for (int k = 0; k < NUM_GPUS; k++) {
+      for (uint32_t i = 0; i < bias_len; i++) {
+        Torus mu = ModSwitchToTorus(int_filt[i], MSG_SPACE);
+        NoiselessTrivial((*p_bias)->enc_segs[k][i].ctxt[0], mu);
+      }
+    }
+    free(int_filt);
     if(p_slope!=NULL && shift_bits> 1){ BinOps::get_intfilters_ptxt(fd_bias, p_slope, bias_len) ; }
     //copy dimension
     memcpy(&lay_dim, ret_dim, sizeof(lay_dim)) ;
@@ -406,7 +423,6 @@ tBitPacked* IntFunc::Quantize::execute(tFixedPointPacked* p_inputs, tFixedPointP
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
     //input error checking
     assert(b_prep) ;
-
     uint32_t i;
     int idx;
     uint32_t sm_num = 40; // CONFIG: set to number of streaming multiprocessors per GPU

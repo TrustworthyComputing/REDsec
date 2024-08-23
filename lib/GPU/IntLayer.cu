@@ -133,7 +133,7 @@ void* IntLayer::run(eAction e_act, tActParams* ap, FILE* fd)
 
     //quantize
     if(e_act == E_PREP){
-      dim = lquant->prep(fd, dim, p_bias, p_slope) ;
+      dim = lquant->prep(fd, dim, &p_bias, p_slope) ;
     }
     else if(e_act == E_EXEC)
     {
