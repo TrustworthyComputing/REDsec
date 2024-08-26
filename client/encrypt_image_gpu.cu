@@ -58,24 +58,17 @@ int main(int argc, char** argv) {
   int length = stoi(str_length, nullptr, 10);
   int width = stoi(str_width, nullptr, 10);
   int channels = stoi(str_channels, nullptr, 10);
-  int num_ctxts = length * width * channels * 8;
+  int num_ctxts = length * width * channels;
 
   Ctxt* e_image = new Ctxt[num_ctxts];
-  count = 0;
-  
-  Ptxt* pt = new Ptxt[8];
+  int j = 0;
   while ((pos = image.find(delim)) != string::npos) {
       curr_val = image.substr(0, pos);
       image.erase(0, pos + delim.length());
       int ptxt_val = stoi(curr_val, nullptr, 10);
-      for (int i=count; i<count+8; i++) {
-        pt[i-count].message_ = (ptxt_val>>i)&1;
-        Encrypt(e_image[i], pt[i-count], secret_key);
-        WriteCtxtToFileRed(e_image[i], "image.ctxt");
-      }
-      count += 8;
+      EncryptIntRed(e_image[j], ptxt_val, 4096, secret_key);
+      WriteCtxtToFileRed(e_image[j], "image.ctxt");
+      j++;
   }
-
-  delete [] pt;
   delete [] e_image;
 }

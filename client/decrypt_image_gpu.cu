@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <algorithm>
+#include <vector>
 #include "REDcuFHE/redcufhe_gpu.cuh"
 
 using namespace std;
@@ -45,32 +47,25 @@ int main(int argc, char** argv) {
     return -1;
   }
 
-  ifstream myfile("bitsize.data");
-  int msg_bits = 0;
-  if (myfile.is_open()) {
-    myfile >> msg_bits;
-    myfile.close();
-  }
-  if (msg_bits < 1) {
-    cout << "Invalid bitsize, re-run inference procedure!" << endl;
-    return 0;
-  }
-  msg_space = pow_int(2, msg_bits);
-
+  msg_space = 4096;
+  
   PriKey secret_key;
   ReadPriKeyFromFile(secret_key, "secret.key");
 
   Ctxt* e_labels = new Ctxt[num_classes];
-  int* pt_labels = new int[num_classes];
-  
+  vector<int> pt_labels(num_classes);
   std::ifstream input_file("network_output.ctxt");
   for (int i = 0; i < num_classes; i++) {
     ReadCtxtFromFileRed(e_labels[i], input_file);
     DecryptIntRed(pt_labels[i], e_labels[i], msg_space, secret_key);
-    cout << "Class " << i << ": " << pt_labels[i] << endl;
+    if (pt_labels[i] > (msg_space/2)) {
+      pt_labels[i] -= msg_space; 
+    }
   }
   input_file.close();
 
+  int bestScoreIdx = std::max_element(pt_labels.begin(),pt_labels.end()) - pt_labels.begin();
+  cout << "Classification Result: " << bestScoreIdx << endl;
+
   delete [] e_labels;
-  delete [] pt_labels;
 }

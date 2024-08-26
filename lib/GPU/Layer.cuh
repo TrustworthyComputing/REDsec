@@ -15,7 +15,7 @@ typedef redcufhe::PubKey TFheGateBootstrappingCloudKeySet ;
 #define NUM_GPUS 1
 #define MULTIBIT_BITS 26
 #define FIXEDPOINT_BITS 26
-#define MSG_SPACE 512
+#define MSG_SPACE 4096
 /********************************** typedefs ***********************************/
 typedef float tFloat ;          //floating point arithmetic
 typedef redcufhe::Ctxt tBit;

@@ -55,7 +55,7 @@ int main(void)
     #if defined(GPU_ENC)
     size_t in_size = indim.hw.h * indim.hw.w * indim.in_dep;
     tMultiBitPacked* nn_data;
-    mbit_calloc_global(&nn_data, in_size, 8);
+    mbit_calloc_global(&nn_data, in_size, 1);
     tMultiBitPacked* nn_result ;
     mbit_calloc_global(&nn_result, outdim.in_dep, 1);
 
@@ -64,9 +64,7 @@ int main(void)
       cudaSetDevice(k);
       std::ifstream input_file("../../../client/image.ctxt");
       for(uint32_t i = 0; i < in_size; i++) {
-        for (uint8_t j = 0; j < 8; j++) {
-          ReadCtxtFromFileRed(nn_data->enc_segs[k][i].ctxt[j], input_file);
-        }
+        ReadCtxtFromFileRed(nn_data->enc_segs[k][i].ctxt[0], input_file);
       }
       input_file.close();
     }
@@ -78,6 +76,11 @@ int main(void)
     high_resolution_clock::time_point t2 = high_resolution_clock::now();
     duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
     std::cout << "Inference Time: " << time_span.count() << " seconds\n";
+    
+    // Write encrypted results
+    for (uint8_t i = 0; i < outdim.in_dep; i++) {
+      WriteCtxtToFileRed(nn_result->enc_segs[0][i].ctxt[0], "../../../client/network_output.ctxt");
+    }
     CleanUp();
     exit(0);
     #elif defined(ENCRYPTED)

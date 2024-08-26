@@ -139,12 +139,8 @@ tMultiBitPacked* BinFunc::Convolution::execute(tBitPacked* p_inputs)
                 //Loop 1a: multiply
                 assert(p_inputs_bar != NULL) ;
                 input_i = get_input_i(ph, pw, di) ;
-                //XNOR 0 is NOT
-                BinOps::multiply(&p_inputs_bar->enc_segs[idx][input_i], &p_inputs->enc_segs[idx][input_i], 0, st[idx][st_ctr % sm_num]) ;
-                //XNOR 1 is copy - use original input
-                BinOps::unbinarize_int_inv(p_inputs_bar->enc_segs[idx][input_i], st[idx][st_ctr % sm_num]);
-                BinOps::unbinarize_int(p_inputs->enc_segs[idx][input_i], st[idx][st_ctr % sm_num]);
-                st_ctr++;
+                SubRed(p_inputs_bar->enc_segs[idx][input_i], p_inputs_bar->enc_segs[idx][input_i], p_inputs->enc_segs[idx][input_i], st[idx][st_ctr % sm_num]);
+                st_ctr = (st_ctr + 1) % sm_num;
             }
         }
     }
@@ -178,13 +174,11 @@ tMultiBitPacked* BinFunc::Convolution::execute(tBitPacked* p_inputs)
                     {
                         if(p_filters[filt_i] == 0)
                         {
-                            for (int el = 0; el <= p_window->enc_segs[idx][wi].ctxt[0].lwe_sample_->n(); el ++)
-                              p_window->enc_segs[idx][wi].ctxt[0].lwe_sample_->data()[el] = p_inputs_bar->enc_segs[idx][input_i].lwe_sample_->data()[el];
+                            Copy(p_window->enc_segs[idx][wi].ctxt[0], p_inputs_bar->enc_segs[idx][input_i], st_ctr);
                         }
                         else
                         {
-                            for (int el = 0; el <= p_window->enc_segs[idx][wi].ctxt[0].lwe_sample_->n(); el ++)
-                              p_window->enc_segs[idx][wi].ctxt[0].lwe_sample_->data()[el] = p_inputs->enc_segs[idx][input_i].lwe_sample_->data()[el];
+                            Copy(p_window->enc_segs[idx][wi].ctxt[0], p_inputs->enc_segs[idx][input_i], st_ctr);
                         }
                     }
                     //padding, alternate 0s and 1s
@@ -209,8 +203,10 @@ tMultiBitPacked* BinFunc::Convolution::execute(tBitPacked* p_inputs)
                 }
                 output_i = get_output_i(ph, pw, od) ;
                 for (ops = 0; ops < partsum_ops; ops++) {
-                  BinOps::int_add(p_output->enc_segs[idx][output_i].ctxt[0], p_output->enc_segs[idx][output_i].ctxt[0], p_window->enc_segs[idx][ops].ctxt[0], st[idx][st_ctr % sm_num]);
-                  st_ctr = (st_ctr + 1) % 40;
+                  BinOps::int_add(p_output->enc_segs[idx][output_i].ctxt[0],
+                  p_output->enc_segs[idx][output_i].ctxt[0],
+                  p_window->enc_segs[idx][ops].ctxt[0], st[idx][st_ctr %
+                  sm_num]);
                 }
             }
         }
