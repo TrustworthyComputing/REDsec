@@ -90,6 +90,7 @@ void HeBNN::init(FILE* in_file, bool b_prep)
         params.bnorm.use_scale = false ;
         params.bnorm.eps = 0.001 ;
         params.e_bias = E_BNORM ;
+	params.version = 1 ;
 
 	//START: Auto generated model
 	//END: Auto generated model
